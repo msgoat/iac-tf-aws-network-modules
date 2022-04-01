@@ -1,4 +1,4 @@
-# iac-tf-aws-network-module
+# iac-tf-aws-network-modules
 
 Terraform multi-module to set up network resources on AWS.
 
