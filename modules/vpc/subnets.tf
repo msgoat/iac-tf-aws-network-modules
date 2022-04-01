@@ -19,6 +19,7 @@ locals {
   // build map of subnet template key / values with stable keys
   subnet_template_keys = [ for sn in local.subnets_per_zone : "${sn.zone_name}-${sn.given_subnet_name}" ]
   subnet_template_values = [ for spz in local.subnets_per_zone : {
+    subnet_key = "${spz.zone_name}-${spz.given_subnet_name}"
     subnet_name = spz.subnet_name
     given_subnet_name = spz.given_subnet_name
     zone_name = spz.zone_name
@@ -26,9 +27,28 @@ locals {
     newbits = local.given_subnets_by_name[spz.given_subnet_name].newbits
     tags = local.given_subnets_by_name[spz.given_subnet_name].tags
     subnet_number = local.subnet_index_by_name[spz.subnet_name] + 1
-    cidr_block = cidrsubnet(var.network_cidr, local.given_subnets_by_name[spz.given_subnet_name].newbits, local.subnet_index_by_name[spz.subnet_name] + 1)
   } ]
   subnet_templates = zipmap(local.subnet_template_keys, local.subnet_template_values)
+  // build a map of subnet_template_values by zone
+  subnet_templates_by_zone_keys = distinct([ for v in local.subnet_template_values : v.zone_name])
+  subnet_templates_by_zone_values = [ for k in local.subnet_templates_by_zone_keys : [for v in local.subnet_template_values : v if v.zone_name == k ] ]
+  subnet_templates_by_zone = zipmap(local.subnet_templates_by_zone_keys, local.subnet_templates_by_zone_values)
+  // filter subnet templates for public subnet templates
+  public_subnet_template_values = [ for v in local.subnet_template_values : v if v.accessibility == "public" ]
+  public_subnet_template_keys = [ for v in local.subnet_template_values : v.subnet_key if v.accessibility == "public" ]
+  public_subnet_templates = zipmap(local.public_subnet_template_keys, local.public_subnet_template_values)
+  // build a map of public subnet_template_values by zone
+  public_subnet_templates_by_zone_keys = distinct([ for v in local.public_subnet_template_values : v.zone_name])
+  public_subnet_templates_by_zone_values = [ for k in local.public_subnet_templates_by_zone_keys : [for v in local.public_subnet_template_values : v if v.zone_name == k ] ]
+  public_subnet_templates_by_zone = zipmap(local.public_subnet_templates_by_zone_keys, local.public_subnet_templates_by_zone_values)
+  // filter subnet templates for private subnet templates
+  private_subnet_template_values = [ for v in local.subnet_template_values : v if v.accessibility == "private" ]
+  private_subnet_template_keys = [ for v in local.subnet_template_values : v.subnet_key if v.accessibility == "private" ]
+  private_subnet_templates = zipmap(local.private_subnet_template_keys, local.private_subnet_template_values)
+  // build a map of private subnet_template_values by zone
+  private_subnet_templates_by_zone_keys = distinct([ for v in local.private_subnet_template_values : v.zone_name])
+  private_subnet_templates_by_zone_values = [ for k in local.private_subnet_templates_by_zone_keys : [for v in local.private_subnet_template_values : v if v.zone_name == k ] ]
+  private_subnet_templates_by_zone = zipmap(local.private_subnet_templates_by_zone_keys, local.private_subnet_templates_by_zone_values)
 }
 
 // create a subnet based on each subnet template

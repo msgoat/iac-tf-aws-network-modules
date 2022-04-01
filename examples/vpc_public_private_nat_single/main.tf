@@ -7,7 +7,7 @@ terraform {
   }
 }
 
-module vpc_public_private_no_nat {
+module vpc_public_private_nat_single {
   source = "../../modules/vpc"
   region_name = "eu-west-1"
   solution_name = "iactst2022"
@@ -19,10 +19,10 @@ module vpc_public_private_no_nat {
     ManagedBy = "Terraform"
     PartOf = "CloudTrain"
   }
-  network_name = "vpcpubprivnatnone"
+  network_name = "vpcpubprivnatsingle"
   network_cidr = "10.0.0.0/16"
   inbound_traffic_cidrs = [ "0.0.0.0/0" ]
-  nat_strategy = "NAT_NONE"
+  nat_strategy = "NAT_GATEWAY_SINGLE"
   zones_to_span = 2
   subnets = [
     {
@@ -41,9 +41,9 @@ module vpc_public_private_no_nat {
 }
 
 output subnets {
-  value = module.vpc_public_private_no_nat.subnets
+  value = module.vpc_public_private_nat_single.subnets
 }
 
 output debug {
-  value = module.vpc_public_private_no_nat.debug
+  value = module.vpc_public_private_nat_single.debug
 }

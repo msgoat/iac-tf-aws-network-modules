@@ -16,6 +16,10 @@ output subnets {
   }]
 }
 
+output debug {
+  value = local.subnet_templates_by_zone
+}
+
 /*
 output bastion_security_group_name {
   description = "Name of the security group applied to all bastion instances."
