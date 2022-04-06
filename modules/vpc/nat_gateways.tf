@@ -52,8 +52,8 @@ resource aws_eip nat {
 
 # add a route to the common route tables of all private subnets which routes all internet-bound traffic from private subnets to the NAT gateway in the same AZ
 resource aws_route ngw {
-  for_each = local.private_route_tables
+  for_each = length(local.nat_gateways) != 0 ? local.private_route_tables : {}
   route_table_id = aws_route_table.private[each.key].id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id = aws_nat_gateway.nat[local.nat_gateways_by_zone[each.key].nat_gateway_key].id
+  nat_gateway_id = aws_nat_gateway.nat[local.nat_gateways_by_zone[each.value.zone_name].nat_gateway_key].id
 }
