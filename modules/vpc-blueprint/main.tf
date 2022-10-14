@@ -17,11 +17,3 @@ terraform {
 locals {
   module_common_tags = var.common_tags
 }
-
-data "aws_region" "current" {
-
-}
-
-data "aws_availability_zones" "zones" {
-  state = "available"
-}

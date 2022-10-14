@@ -49,12 +49,26 @@ variable "nat_strategy" {
   type        = string
 }
 
-variable "subnets" {
-  description = "Specifications of subnets to be created in each availability zone the VPC is supposed to span"
-  type = list(object({
-    subnet_name   = string      # subnet name
-    accessibility = string      # accessibility of the subnet ("public" or "private")
-    newbits       = number      # additional bits to extend the prefix of this subnet
-    tags          = map(string) # Tags to be attached to the subnet
-  }))
+variable "number_of_bastion_instances" {
+  description = "Number of bastion EC2 instances that must be always available; set to 0 if you don't want to have any bastion servers"
+  type        = number
 }
+
+variable "bastion_ami_id" {
+  description = "Unique identifier of an AMI for the bastion instances"
+  type        = string
+  default     = ""
+}
+
+variable "bastion_key_name" {
+  description = "Name of SSH key pair name to used for the bastion instances"
+  type        = string
+  default     = ""
+}
+
+variable "bastion_instance_type" {
+  description = "Name of SSH key pair name to used for the bastion instances"
+  type        = string
+  default     = ""
+}
+

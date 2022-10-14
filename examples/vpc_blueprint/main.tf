@@ -7,8 +7,12 @@ terraform {
   }
 }
 
-module "vpc_public_only_no_nat" {
-  source         = "../../modules/vpc"
+provider "aws" {
+  region = "eu-west-1"
+}
+
+module "vpc_blueprint" {
+  source         = "../..//modules/vpc-blueprint"
   region_name    = "eu-west-1"
   solution_name  = "iactst2022"
   solution_stage = "dev"
@@ -19,25 +23,8 @@ module "vpc_public_only_no_nat" {
     ManagedBy    = "Terraform"
     PartOf       = "CloudTrain"
   }
-  network_name          = "vpcpubonlynonat"
+  network_name          = "vpcblueprint"
   network_cidr          = "10.0.0.0/16"
   inbound_traffic_cidrs = ["0.0.0.0/0"]
-  nat_strategy          = "NAT_NONE"
-  zones_to_span         = 3
-  subnets = [
-    {
-      subnet_name   = "web"
-      accessibility = "public"
-      newbits       = 8
-      tags          = {}
-    }
-  ]
-}
-
-output "subnets" {
-  value = module.vpc_public_only_no_nat.subnets
-}
-
-output "debug" {
-  value = module.vpc_public_only_no_nat.debug
+  nat_strategy          = "NAT_GATEWAY_SINGLE"
 }
