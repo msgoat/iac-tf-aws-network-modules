@@ -1,5 +1,7 @@
 # iac-tf-aws-network-modules
 
+> __@deprecated__ please use git repo [iac-tf-aws-cloudtrain-modules](https://github.com/msgoat/iac-tf-az-cloudtrain-modules) instead!
+
 Terraform multi-module to set up network resources on AWS.
 
 Provides the following modules:
